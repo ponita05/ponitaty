@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ponita Ty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Geist+Mono:wght@300;400;500&family=Bricolage+Grotesque:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #08111E;
+  --navy2: #0E1C2F;
+  --navy3: #152540;
+  --blue: #1E3A5F;
+  --blue-mid: #2E5F9E;
+  --glow: #4A90D9;
+  --glow2: #6FB3F5;
+  --cream: #EEE8DC;
+  --cream2: #C8C0B0;
+  --muted: #7A8FA8;
+  --rule: rgba(74,144,217,0.15);
+  --rule2: rgba(74,144,217,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--navy);
+  color: var(--cream);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CUSTOM CURSOR ── */
+.cursor {
+  width: 8px; height: 8px;
+  background: var(--glow);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%);
+}
+.cursor-ring {
+  width: 32px; height: 32px;
+  border: 1px solid rgba(74,144,217,0.4);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, border-color 0.2s;
+}
+
+/* ── STAR FIELD ── */
+#stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: twinkle var(--d) ease-in-out infinite;
+  animation-delay: var(--delay);
+}
+@keyframes twinkle {
+  0%, 100% { opacity: var(--min-op); transform: scale(1); }
+  50% { opacity: var(--max-op); transform: scale(1.3); }
+}
+
+/* ── AMBIENT GLOW ── */
+.ambient {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.12;
+}
+.ambient-1 { width: 600px; height: 600px; background: #1E4A8F; top: -200px; right: -100px; }
+.ambient-2 { width: 400px; height: 400px; background: #0A3060; bottom: 100px; left: -100px; }
+
+/* ── LAYOUT ── */
+.page { max-width: 900px; margin: 0 auto; padding: 0 36px; position: relative; z-index: 1; }
+
+/* ── NAV ── */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32px 0 28px;
+  border-bottom: 1px solid var(--rule);
+}
+.nav-mark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  color: var(--cream);
+  text-decoration: none;
+}
+.nav-mark span { color: var(--glow); }
+.nav-links { display: flex; gap: 32px; align-items: center; }
+.nav-links a {
+  font-family: 'Geist Mono', monospace;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--glow2); }
+
+/* ── HERO ── */
+.hero { padding: 88px 0 72px; position: relative; }
+.hero-eyebrow {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--glow);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  animation: fadeUp 0.7s ease forwards 0.1s;
+}
+.hero-eyebrow::after {
+  content: '';
+  flex: 1;
+  max-width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--glow), transparent);
+}
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(54px, 8vw, 96px);
+  font-weight: 300;
+  line-height: 1.0;
+  letter-spacing: -0.01em;
+  color: var(--cream);
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.2s;
+}
+h1 em { font-style: italic; color: var(--glow2); }
+.hero-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--muted);
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.3s;
+}
+.hero-desc {
+  font-size: 14px;
+  color: var(--cream2);
+  max-width: 500px;
+  line-height: 1.8;
+  margin-bottom: 36px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.4s;
+}
+.hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.5s;
+}
+.chip {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--glow);
+  border: 1px solid rgba(74,144,217,0.3);
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: rgba(74,144,217,0.05);
+  transition: background 0.2s, border-color 0.2s;
+}
+.chip:hover { background: rgba(74,144,217,0.12); border-color: rgba(74,144,217,0.6); }
+.hero-cta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.6s;
+}
+.btn-primary {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--navy);
+  background: var(--glow);
+  padding: 12px 24px;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-primary:hover { background: var(--glow2); transform: translateY(-1px); }
+.btn-ghost {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.btn-ghost:hover { color: var(--cream); border-color: var(--cream2); }
+
+/* ── SECTION ── */
+.section-label {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--glow);
+  margin-bottom: 32px;
+  padding-top: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-label::before { content: ''; width: 20px; height: 1px; background: var(--glow); }
+
+/* ── PROJECT CARDS ── */
+.projects { display: flex; flex-direction: column; gap: 1px; margin-bottom: 56px; }
+.proj-card {
+  background: var(--navy2);
+  border: 1px solid var(--rule2);
+  padding: 32px 36px;
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 32px;
+  align-items: start;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s, background 0.3s;
+}
+.proj-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(74,144,217,0.04) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.proj-card:hover { border-color: rgba(74,144,217,0.3); background: var(--navy3); }
+.proj-card:hover::after { opacity: 1; }
+.proj-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--glow), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.proj-card:hover::before { opacity: 1; }
+
+.proj-top { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; flex-wrap: wrap; }
+.proj-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--cream);
+  letter-spacing: 0.01em;
+}
+.proj-award {
+  font-family: 'Geist Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--glow);
+  border: 1px solid rgba(74,144,217,0.4);
+  padding: 3px 9px;
+  border-radius: 2px;
+  background: rgba(74,144,217,0.08);
+}
+.proj-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.75;
+  margin-bottom: 18px;
+  max-width: 520px;
+}
+.proj-desc a { color: var(--glow2); text-decoration: none; border-bottom: 1px solid rgba(111,179,245,0.3); }
+.proj-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  font-family: 'Geist Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--blue-mid);
+  border: 1px solid rgba(46,95,158,0.35);
+  padding: 3px 8px;
+  border-radius: 2px;
+}
+.proj-stat-block { text-align: right; padding-top: 4px; }
+.proj-stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 40px;
+  font-weight: 300;
+  color: var(--glow2);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.proj-stat-label {
+  font-family: 'Geist Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── ABOUT ── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 48px;
+  margin-bottom: 56px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid var(--rule2);
+}
+.about-text p {
+  font-size: 14px;
+  color: var(--cream2);
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+.about-text a { color: var(--glow2); text-decoration: none; border-bottom: 1px solid rgba(111,179,245,0.3); }
+.about-facts { display: flex; flex-direction: column; gap: 1px; }
+.fact-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule2);
+}
+.fact-key {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.fact-val { font-size: 13px; color: var(--cream2); text-align: right; }
+.fact-val a { color: var(--glow2); text-decoration: none; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--rule);
+  padding: 28px 0 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-left {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--muted);
+  font-style: italic;
+}
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--glow2); }
+
+/* ── AI CHAT WIDGET ── */
+#chat-orb { position: fixed; bottom: 36px; right: 36px; z-index: 1000; }
+.orb-btn {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--glow2), var(--blue-mid));
+  border: none;
+  cursor: none;
+  box-shadow: 0 0 24px rgba(74,144,217,0.4), 0 0 48px rgba(74,144,217,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: orbPulse 3s ease-in-out infinite;
+  position: relative;
+}
+.orb-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 32px rgba(74,144,217,0.6), 0 0 64px rgba(74,144,217,0.2);
+}
+@keyframes orbPulse {
+  0%, 100% { box-shadow: 0 0 24px rgba(74,144,217,0.4), 0 0 48px rgba(74,144,217,0.15); }
+  50% { box-shadow: 0 0 36px rgba(74,144,217,0.6), 0 0 72px rgba(74,144,217,0.25); }
+}
+.orb-tooltip {
+  position: absolute;
+  right: 68px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--navy3);
+  border: 1px solid var(--rule);
+  color: var(--cream2);
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 6px 12px;
+  white-space: nowrap;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.orb-btn:hover .orb-tooltip { opacity: 1; }
+.orb-icon { font-size: 22px; line-height: 1; }
+
+.chat-panel {
+  position: absolute;
+  bottom: 68px;
+  right: 0;
+  width: 360px;
+  background: var(--navy2);
+  border: 1px solid rgba(74,144,217,0.25);
+  border-radius: 4px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(74,144,217,0.08);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 500px;
+}
+.chat-panel.open { display: flex; animation: panelIn 0.3s ease; }
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.chat-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--navy3);
+  flex-shrink: 0;
+}
+.chat-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--glow2), var(--blue));
+  box-shadow: 0 0 12px rgba(74,144,217,0.4);
+  flex-shrink: 0;
+}
+.chat-header-text { flex: 1; }
+.chat-name { font-size: 13px; font-weight: 600; color: var(--cream); }
+.chat-status {
+  font-family: 'Geist Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--glow);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.chat-status::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--glow);
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+.chat-close {
+  background: none; border: none;
+  color: var(--muted); font-size: 20px;
+  cursor: none; line-height: 1;
+  transition: color 0.2s; padding: 0 4px;
+}
+.chat-close:hover { color: var(--cream); }
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--blue) transparent;
+  min-height: 0;
+}
+.msg { display: flex; gap: 10px; align-items: flex-start; }
+.msg.user { flex-direction: row-reverse; }
+.msg-avatar {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--navy3);
+  border: 1px solid var(--rule);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+.msg.user .msg-avatar { background: rgba(74,144,217,0.15); border-color: rgba(74,144,217,0.3); }
+.msg-bubble {
+  max-width: 240px;
+  padding: 10px 14px;
+  border-radius: 2px;
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+.msg.ponita .msg-bubble { background: var(--navy3); border: 1px solid var(--rule); color: var(--cream2); }
+.msg.user .msg-bubble { background: rgba(74,144,217,0.12); border: 1px solid rgba(74,144,217,0.25); color: var(--cream); }
+.msg-bubble.typing { display: flex; gap: 5px; align-items: center; padding: 14px; }
+.dot { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); animation: dotBounce 1.2s ease-in-out infinite; }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotBounce { 0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)} }
+
+.chat-suggestions {
+  padding: 0 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.suggestion {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--glow);
+  background: rgba(74,144,217,0.06);
+  border: 1px solid rgba(74,144,217,0.2);
+  padding: 7px 12px;
+  text-align: left;
+  cursor: none;
+  border-radius: 2px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.suggestion:hover { background: rgba(74,144,217,0.12); border-color: rgba(74,144,217,0.4); }
+
+.chat-input-row {
+  padding: 12px 16px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  gap: 8px;
+  background: var(--navy);
+  flex-shrink: 0;
+}
+#chat-input {
+  flex: 1;
+  background: var(--navy2);
+  border: 1px solid var(--rule);
+  color: var(--cream);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 9px 12px;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#chat-input:focus { border-color: rgba(74,144,217,0.5); }
+#chat-input::placeholder { color: var(--muted); }
+#send-btn {
+  background: var(--glow);
+  border: none;
+  color: var(--navy);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 9px 14px;
+  cursor: none;
+  border-radius: 2px;
+  transition: background 0.2s;
+  letter-spacing: 0.06em;
+}
+#send-btn:hover { background: var(--glow2); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 640px) {
+  .proj-card { grid-template-columns: 1fr; }
+  .proj-stat-block { text-align: left; }
+  .about-grid { grid-template-columns: 1fr; }
+  .chat-panel { width: 300px; }
+  h1 { font-size: 52px; }
+  .nav-links { gap: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+<div id="stars"></div>
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
+
+<div class="page">
+
+  <nav>
+    <a class="nav-mark" href="#">ponita<span>.</span>ty</a>
+    <div class="nav-links">
+      <a href="#projects">work</a>
+      <a href="#about">about</a>
+      <a href="https://github.com/ponita05" target="_blank">github ↗</a>
+      <a href="https://linkedin.com/in/ponitaty" target="_blank">linkedin ↗</a>
+      <a href="https://www.instagram.com/ponitaty/" target="_blank">instagram ↗</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-eyebrow">Available · Summer 2026 · SF or NY</div>
+    <h1>Ponita <em>Ty.</em></h1>
+    <p class="hero-tagline">builder. creator. connector.</p>
+    <p class="hero-desc">
+      CS junior at UMich building AI products that ship and grow.
+      I'm drawn to the intersection of technical craft and creative thinking —
+      making things that work beautifully and reach people.
+    </p>
+    <div class="hero-chips">
+      <span class="chip">SWE Internships</span>
+      <span class="chip">Growth Engineering</span>
+      <span class="chip">AI / ML</span>
+      <span class="chip">F-1 · OPT eligible</span>
+      <span class="chip">2× Hackathon winner</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn-primary" href="mailto:ty.ponita@gmail.com">Say hello →</a>
+      <a class="btn-ghost" href="#projects">See my work</a>
+    </div>
+  </section>
+
+  <div class="section-label fade-in" id="projects">Selected Work</div>
+  <div class="projects">
+
+    <div class="proj-card fade-in">
+      <div>
+        <div class="proj-top">
+          <span class="proj-name">HandyDaddy</span>
+          <span class="proj-award">🏆 MLH ElevenLabs Winner</span>
+        </div>
+        <p class="proj-desc">
+          Real-time home repair assistant that sees what you see. Three-stage LLM pipeline —
+          Gemini 2.0 Flash for visual analysis, two Llama 3.3 70B models via Groq for reasoning
+          and step-by-step repair plans. FAISS vector search grounds every instruction in source material.
+        </p>
+        <div class="proj-tags">
+          <span class="tag">Gemini 2.0</span>
+          <span class="tag">Llama 3.3 70B</span>
+          <span class="tag">FAISS / RAG</span>
+          <span class="tag">FastAPI</span>
+          <span class="tag">React / TS</span>
+          <span class="tag">Redis</span>
+        </div>
+      </div>
+      <div class="proj-stat-block">
+        <div class="proj-stat-num">3</div>
+        <div class="proj-stat-label">stage LLM<br>pipeline</div>
+      </div>
+    </div>
+
+    <div class="proj-card fade-in">
+      <div>
+        <div class="proj-top">
+          <span class="proj-name">Ventura</span>
+          <span class="proj-award">🥇 MHacks Overdrive 1st</span>
+        </div>
+        <p class="proj-desc">
+          AI community Q&A platform that stops duplicate questions before they happen.
+          Semantic search with FastEmbed matches new queries to existing threads at 92%+ accuracy.
+          Full-stack: React, Gemini API, PostgreSQL with optimized indexing.
+        </p>
+        <div class="proj-tags">
+          <span class="tag">FastEmbed</span>
+          <span class="tag">Semantic Search</span>
+          <span class="tag">Gemini API</span>
+          <span class="tag">PostgreSQL</span>
+          <span class="tag">React</span>
+        </div>
+      </div>
+      <div class="proj-stat-block">
+        <div class="proj-stat-num">92%</div>
+        <div class="proj-stat-label">similarity<br>accuracy</div>
+      </div>
+    </div>
+
+    <div class="proj-card fade-in">
+      <div>
+        <div class="proj-top">
+          <span class="proj-name">Nutrinav</span>
+          <span class="proj-award">Live · 100+ students</span>
+        </div>
+        <p class="proj-desc">
+          Nutrition tracking app for UMich dining halls — actively used by 100+ students every day.
+          Built the backend: Node.js ETL pipeline processing 10,000+ data points from the MDining dataset,
+          real-time nutrition updates, 99.7% uptime across a full academic semester.
+        </p>
+        <div class="proj-tags">
+          <span class="tag">Node.js</span>
+          <span class="tag">ETL Pipeline</span>
+          <span class="tag">REST API</span>
+          <span class="tag">Real-time data</span>
+        </div>
+      </div>
+      <div class="proj-stat-block">
+        <div class="proj-stat-num">99.7%</div>
+        <div class="proj-stat-label">uptime,<br>full semester</div>
+      </div>
+    </div>
+
+    <div class="proj-card fade-in">
+      <div>
+        <div class="proj-top">
+          <span class="proj-name">Content & Growth</span>
+          <span class="proj-award">200 → 1,000+ followers</span>
+        </div>
+        <p class="proj-desc">
+          Grew <a href="https://www.instagram.com/derryfield.robotics/" target="_blank">@derryfield.robotics</a> from 200 to 1,000+ followers through strategic content —
+          a viral video broke into the robotics community and compounded. Applied the same instincts to my
+          <a href="https://www.instagram.com/ponitaty/" target="_blank">personal account</a>: travel, ideas, everything that makes me me.
+        </p>
+        <div class="proj-tags">
+          <span class="tag">Content Strategy</span>
+          <span class="tag">Community Growth</span>
+          <span class="tag">Organic reach</span>
+          <span class="tag">Video</span>
+        </div>
+      </div>
+      <div class="proj-stat-block">
+        <div class="proj-stat-num">5×</div>
+        <div class="proj-stat-label">follower<br>growth</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-label fade-in" id="about">About Me</div>
+  <div class="about-grid fade-in">
+    <div class="about-text">
+      <p>
+        I'm originally from Cambodia — I've been in the US for about 6–7 years, living in
+        Massachusetts, New Hampshire, and now Michigan. First-gen international student.
+        Transferred to UMich from UMass Lowell, graduating May 2027.
+      </p>
+      <p>
+        I've always been more on the creative side. I like connecting with people, spreading ideas,
+        and building things that do both. Growth engineering sits right at that intersection —
+        technical craft with real human reach.
+      </p>
+      <p>
+        Outside of building: I read classic novels, and I do at least one solo travel trip a year.
+        Traveling alone keeps me observant, present, and better at collaborating when I come back.
+      </p>
+    </div>
+    <div class="about-facts">
+      <div class="fact-row"><span class="fact-key">Based</span><span class="fact-val">Ann Arbor, MI</span></div>
+      <div class="fact-row"><span class="fact-key">School</span><span class="fact-val">UMich CS, 2027</span></div>
+      <div class="fact-row"><span class="fact-key">Open to</span><span class="fact-val">SWE · Growth Eng</span></div>
+      <div class="fact-row"><span class="fact-key">Visa</span><span class="fact-val">F-1 · OPT eligible</span></div>
+      <div class="fact-row"><span class="fact-key">Languages</span><span class="fact-val">English · Khmer</span></div>
+      <div class="fact-row"><span class="fact-key">GitHub</span><span class="fact-val"><a href="https://github.com/ponita05" target="_blank">ponita05 ↗</a></span></div>
+      <div class="fact-row"><span class="fact-key">Instagram</span><span class="fact-val"><a href="https://www.instagram.com/ponitaty/" target="_blank">@ponitaty ↗</a></span></div>
+      <div class="fact-row"><span class="fact-key">Email</span><span class="fact-val"><a href="mailto:ty.ponita@gmail.com">ty.ponita@gmail.com</a></span></div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="footer-left">made with curiosity.</span>
+    <div class="footer-links">
+      <a href="mailto:ty.ponita@gmail.com">email</a>
+      <a href="https://linkedin.com/in/ponitaty" target="_blank">linkedin</a>
+      <a href="https://github.com/ponita05" target="_blank">github</a>
+    </div>
+  </footer>
+
+</div>
+
+<!-- AI CHAT WIDGET -->
+<div id="chat-orb">
+  <div class="chat-panel" id="chat-panel">
+    <div class="chat-header">
+      <div class="chat-avatar"></div>
+      <div class="chat-header-text">
+        <div class="chat-name">Ask Ponita</div>
+        <div class="chat-status">online now</div>
+      </div>
+      <button class="chat-close" id="chat-close">×</button>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg ponita">
+        <div class="msg-avatar">✦</div>
+        <div class="msg-bubble">hey! i'm an AI version of ponita — ask me anything about my work, background, or what i'm looking for this summer 👋</div>
+      </div>
+    </div>
+    <div class="chat-suggestions" id="suggestions">
+      <button class="suggestion" onclick="sendSuggestion(this)">what projects have you built?</button>
+      <button class="suggestion" onclick="sendSuggestion(this)">why growth engineering?</button>
+      <button class="suggestion" onclick="sendSuggestion(this)">tell me about yourself</button>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chat-input" placeholder="ask me anything..." />
+      <button id="send-btn">send</button>
+    </div>
+  </div>
+  <button class="orb-btn" id="orb-btn">
+    <span class="orb-tooltip">ask ponita ✦</span>
+    <span class="orb-icon">✦</span>
+  </button>
+</div>
+
+<script>
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = -100, my = -100, rx = -100, ry = -100;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+});
+
+function animateRing() {
+  rx += (mx - rx) * 0.14;
+  ry += (my - ry) * 0.14;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+document.querySelectorAll('a, button, .proj-card, .chip').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    ring.style.width = '48px'; ring.style.height = '48px';
+    ring.style.borderColor = 'rgba(74,144,217,0.7)';
+  });
+  el.addEventListener('mouseleave', () => {
+    ring.style.width = '32px'; ring.style.height = '32px';
+    ring.style.borderColor = 'rgba(74,144,217,0.4)';
+  });
+});
+
+// ── STARS ──
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 120; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random() * 1.5 + 0.5;
+  s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${3+Math.random()*5}s;--delay:${Math.random()*5}s;--min-op:${0.05+Math.random()*0.1};--max-op:${0.3+Math.random()*0.5};`;
+  starsEl.appendChild(s);
+}
+
+// ── SCROLL FADE ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ── CHAT ──
+const panel = document.getElementById('chat-panel');
+const orbBtn = document.getElementById('orb-btn');
+const closeBtn = document.getElementById('chat-close');
+const messagesEl = document.getElementById('chat-messages');
+const inputEl = document.getElementById('chat-input');
+const sendBtn = document.getElementById('send-btn');
+const suggestionsEl = document.getElementById('suggestions');
+
+orbBtn.addEventListener('click', () => {
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) setTimeout(() => inputEl.focus(), 300);
+});
+closeBtn.addEventListener('click', () => panel.classList.remove('open'));
+
+const SYSTEM_PROMPT = `You are an AI version of Ponita Ty. Speak in her voice: casual, warm, direct, confident. Use "I". Never robotic or corporate.
+
+ONLY use the facts below. If something isn't covered, say: "that's not something I've shared here yet — feel free to email me at ty.ponita@gmail.com!"
+
+FACTS:
+
+Background: Originally from Cambodia. First-gen international student. In the US ~6-7 years: Massachusetts, New Hampshire, now Ann Arbor Michigan. Transferred to UMich from UMass Lowell. CS junior, graduating May 2027. GPA 3.7 at UMass Lowell. F-1 visa, OPT eligible. Speaks English and Khmer.
+
+Looking for: SWE or growth engineering internship, Summer 2026, in SF or NY.
+
+Projects:
+- HandyDaddy (Feb 2026): MLH ElevenLabs winner. Real-time home repair assistant using live video. Three-stage LLM pipeline: Gemini 2.0 Flash for visual analysis, two Llama 3.3 70B via Groq for reasoning and repair plans. FAISS vector search over repair docs. React/TypeScript frontend, 4-second frame capture, FastAPI backend, Redis session state, SHA256 deduplication.
+- Ventura (Sept 2025): 1st place MHacks Overdrive. AI Q&A platform preventing duplicate questions via semantic search (FastEmbed, 92%+ accuracy). React frontend, Gemini API, PostgreSQL.
+- Nutrinav (Sept 2025–present): Backend developer. Nutrition tracking for UMich dining halls, 100+ daily users. Node.js ETL pipeline, 10,000+ data points, 99.7% uptime.
+- iPrep (Feb–Aug 2025): Co-founder. AI career coaching startup. $4K seed funding. 30+ user interviews led to pivot to skill gap analysis. 40% improved LLM response accuracy.
+- Content/Growth: Grew @derryfield.robotics from 200 to 1,000+ followers (5x) via strategic content including a viral video. Grows personal account @ponitaty — travel, life, ideas.
+
+Research: Toby Hodes Fellow ($1,500). Human-robot interaction research with Office of Naval Research. Built pipeline reducing communication latency 35% between divers and autonomous underwater vehicles.
+
+Skills: Python, JavaScript/TypeScript, C/C++, React, FastAPI, Node.js, PostgreSQL, Docker, Git, Gemini, Llama, Groq, FAISS, RAG pipelines, vector embeddings.
+
+Why growth engineering: Always been creative and loves connecting with people. Growth eng sits at the intersection of technical building and real human reach — making things that actually spread, not just work. Proven it with the robotics account growth.
+
+Personality: Reads classic novels. Does one solo travel trip per year — stays observant and present. Loves hackathons for the building + brainstorming energy. Warm, collaborative, curious.
+
+Keep answers to 2-4 sentences. Be genuine and warm. If someone wants to connect or hire her, point them to ty.ponita@gmail.com.`;
+
+let conversationHistory = [];
+
+function addMessage(text, role) {
+  const msg = document.createElement('div');
+  msg.className = `msg ${role}`;
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = role === 'ponita' ? '✦' : '↗';
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.textContent = text;
+  msg.appendChild(avatar);
+  msg.appendChild(bubble);
+  messagesEl.appendChild(msg);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function addTyping() {
+  const msg = document.createElement('div');
+  msg.className = 'msg ponita';
+  msg.id = 'typing-msg';
+  msg.innerHTML = `<div class="msg-avatar">✦</div><div class="msg-bubble typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  messagesEl.appendChild(msg);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+async function sendMessage(text) {
+  if (!text.trim()) return;
+  suggestionsEl.style.display = 'none';
+  addMessage(text, 'user');
+  conversationHistory.push({ role: 'user', content: text });
+  inputEl.value = '';
+  addTyping();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: conversationHistory
+      })
+    });
+    const data = await res.json();
+    document.getElementById('typing-msg')?.remove();
+    const reply = data.content?.[0]?.text || "something went wrong — email me at ty.ponita@gmail.com!";
+    addMessage(reply, 'ponita');
+    conversationHistory.push({ role: 'assistant', content: reply });
+  } catch {
+    document.getElementById('typing-msg')?.remove();
+    addMessage("something went wrong on my end! reach me at ty.ponita@gmail.com 💙", 'ponita');
+  }
+}
+
+function sendSuggestion(btn) { sendMessage(btn.textContent); }
+
+sendBtn.addEventListener('click', () => sendMessage(inputEl.value));
+inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(inputEl.value); });
+</script>
+</body>
+</html>
